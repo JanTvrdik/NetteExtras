@@ -1,0 +1,54 @@
+{block #content}
+	<h1 n:inner-block="title">DatePicker example</h1>
+
+	<script type="text/javascript">
+		$(document).ready(function () {
+			$("input.date").each(function () { // input[type=date] does not work in IE
+				var el = $(this);
+				var value = el.val();
+				var date = (value ? $.datepicker.parseDate($.datepicker.W3C, value) : null);
+				var dateFormat = el.data("datepicker-dateformat") || $.datepicker.W3C;
+
+				var minDate = el.attr("min") || null;
+				if (minDate) minDate = $.datepicker.parseDate($.datepicker.W3C, minDate);
+				var maxDate = el.attr("max") || null;
+				if (maxDate) maxDate = $.datepicker.parseDate($.datepicker.W3C, maxDate);
+
+				el.get(0).type = "text"; // changing via jQuery is prohibited, because of IE
+				el.val($.datepicker.formatDate(dateFormat, date));
+				el.datepicker({
+					dateFormat: dateFormat,
+					minDate: minDate,
+					maxDate: maxDate
+				});
+			});
+		});
+	</script>
+
+	{form datePickerForm}
+
+		<p class="error" n:foreach="$formErrors as $error">{$error}</p>
+		<table>
+			<tr>
+				<th>{label datePicker1, text => "Basic"}</th>
+				<td>{input datePicker1}</td>
+			</tr>
+			<tr>
+				<th>{label datePicker2, text => "Customized date format and default value"}</th>
+				<td>{input datePicker2}</td>
+			</tr>
+			<tr>
+				<th>{label datePicker3, text => "Limited range of selectable days"}</th>
+				<td>{input datePicker3}</td>
+			</tr>
+			<tr>
+				<th></th>
+				<td>{input submit, caption => "Send"}
+			</tr>
+		</table>
+
+	{/form}
+
+	{ifset $data}{!$data}{/ifset}
+
+{/block}

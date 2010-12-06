@@ -1,0 +1,35 @@
+body {
+	font: 14px/1.5 "Trebuchet MS", "Geneva CE", lucida, sans-serif;
+	color: #333;
+	background-color: #fff;
+}
+
+#footer {
+	margin-top: 20px;
+	color: #808080;
+	font-size: 80%;
+}
+
+h1 {
+	font-size: 200%;
+	color: #0080C0;
+}
+
+div.flash {
+	color: black;
+	background: #FFF9D7;
+	border: 1px solid #E2C822;
+	padding: 1em;
+	margin: 1em 0;
+}
+
+input.date {
+	background: transparent url(../images/calendar.png) no-repeat right center;
+	border: 1px solid #808080;
+	padding: 2px;
+}
+
+form th {text-align: left; font-weight: normal;}
+form td, th {padding: 2px;}
+
+.ui-datepicker {font-size: 0.8em;}

@@ -1,0 +1,7 @@
+/temp/*
+!/temp/.htaccess
+!/temp/web.config
+
+/log/*
+!/log/.htaccess
+!/log/web.config

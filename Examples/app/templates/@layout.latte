@@ -1,0 +1,33 @@
+<!doctype html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+	<title>{include #title} | Addons and code snippets for Nette Framework (unofficial)</title>
+
+	<!-- jQuery -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"></script>
+
+	<!-- jQuery UI -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
+	<link rel="stylesheet" media="screen,projection,tv" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.6/themes/smoothness/jquery-ui.css">
+
+	<!-- Nette Framework -->
+	<script src="{$basePath}/js/netteForms.js"></script>
+
+	<link rel="stylesheet" media="screen,projection,tv" href="{$basePath}/css/screen.css">
+	<link rel="stylesheet" media="print" href="{$basePath}/css/print.css">
+</head>
+
+<body>
+	<div n:foreach="$flashes as $flash" class="flash {$flash->type}">{$flash->message}</div>
+
+	{include #content}
+
+	<div id="footer">
+		PHP {=PHP_VERSION}<br>
+		{=Nette\Framework::NAME} {=Nette\Framework::VERSION} ({=Nette\Framework::REVISION})<br>
+		<img src="{$basePath}/images/nette-powered.gif" alt="Powered by Nette Framework">
+	</div>
+</body>
+</html>

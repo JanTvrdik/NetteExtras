@@ -34,7 +34,7 @@
 				<td>{input datePicker1}</td>
 			</tr>
 			<tr>
-				<th>{label datePicker2, text => "Customized date format and default value"}</th>
+				<th>{label datePicker2, text => "Validation (filled + valid)"}</th>
 				<td>{input datePicker2}</td>
 			</tr>
 			<tr>
@@ -48,6 +48,17 @@
 		</table>
 
 	{/form}
+
+	<pre>
+$form->addDatePicker('datePicker1');
+$form->addDatePicker('datePicker2')
+	->addRule(Form::FILLED, 'Date is required')
+	->addRule(Form::VALID, 'Entered date is not valid!');
+$form->addDatePicker('datePicker3')
+	->addRule(Form::VALID, 'Entered date is not valid!')
+	->addCondition(Form::FILLED)
+		->addRule(Form::RANGE, 'Entered date is not within allowed range.', array(new DateTime('-14 days'), new DateTime('+14 days')));
+	</pre>
 
 	{ifset $data}{!$data}{/ifset}
 

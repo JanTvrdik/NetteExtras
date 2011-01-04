@@ -59,10 +59,12 @@ final class DemoPresenter extends BasePresenter
 		$form = new Form();
 		$form->addDatePicker('datePicker1');
 		$form->addDatePicker('datePicker2')
-			->setDateFormat('yy-mm-dd')
-			->setDefaultValue(new DateTime('2010-09-01'));
-		$form->addDatePicker('datePicker3', NULL, new DateTime('-14 days'), new DateTime('+14 days'))
+			->addRule(Form::FILLED, 'Date is required')
 			->addRule(Form::VALID, 'Entered date is not valid!');
+		$form->addDatePicker('datePicker3')
+			->addRule(Form::VALID, 'Entered date is not valid!')
+			->addCondition(Form::FILLED)
+				->addRule(Form::RANGE, 'Entered date is not within allowed range.', array(new DateTime('-14 days'), new DateTime('+14 days')));
 		$form->addSubmit('submit');
 		$form->onSubmit[] = callback($this, 'datePickerFormSubmitted');
 		return $form;

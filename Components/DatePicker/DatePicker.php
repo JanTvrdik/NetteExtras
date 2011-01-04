@@ -38,12 +38,6 @@ class DatePicker extends Nette\Forms\FormControl
 	 */
 	private $dateFormat = 'd. m. yy';
 
-	/** @var     DateTime|NULL     minimum selectable date */
-	private $minDate;
-
-	/** @var     DateTime|NULL     maximum selectable date */
-	private $maxDate;
-
 
 
 	/**
@@ -51,15 +45,11 @@ class DatePicker extends Nette\Forms\FormControl
 	 *
 	 * @author   Jan Tvrdík
 	 * @param    string            label
-	 * @param    DateTime          minimum selectable date
-	 * @param    DateTime          maximum selectable date
 	 */
-	public function __construct($label = NULL, DateTime $minDate = NULL, DateTime $maxDate = NULL)
+	public function __construct($label = NULL)
 	{
 		parent::__construct($label);
 		$this->control->type = 'date';
-		$this->minDate = $minDate;
-		$this->maxDate = $maxDate;
 	}
 
 
@@ -121,66 +111,6 @@ class DatePicker extends Nette\Forms\FormControl
 
 
 	/**
-	 * Returns minimum selectable date.
-	 *
-	 * @author   Jan Tvrdík
-	 * @return   DateTime|NULL
-	 */
-	public function getMinDate()
-	{
-		return $this->minDate;
-	}
-
-
-
-	/**
-	 * Sets minimum selectable date.
-	 *
-	 * @author   Jan Tvrdík
-	 * @param    DateTime|NULL
-	 * @return   self
-	 */
-	public function setMinDate($minDate)
-	{
-		if (isset($minDate) && !$minDate instanceof DateTime)
-			throw new \InvalidArgumentException('Parameter $minDate must be instance of DateTime or NULL.');
-		$this->minDate = $minDate;
-		return $this;
-	}
-
-
-
-	/**
-	 * Returns maximum selectable date.
-	 *
-	 * @author   Jan Tvrdík
-	 * @return   DateTime|NULL
-	 */
-	public function getMaxDate()
-	{
-		return $this->maxDate;
-	}
-
-
-
-	/**
-	 * Sets maximum selectable date.
-	 *
-	 * @author   Jan Tvrdík
-	 * @param    DateTime|NULL
-	 * @return   self
-	 */
-	public function setMaxDate($maxDate)
-	{
-		if (isset($maxDate) && !$maxDate instanceof DateTime)
-			throw new \InvalidArgumentException('Parameter $maxDate must be instance of DateTime or NULL.');
-		$this->maxDate = $maxDate;
-		return $this;
-	}
-
-
-
-	/**
 	 * Generates control's HTML element.
 	 *
 	 * @author   Jan Tvrdík
@@ -189,8 +119,10 @@ class DatePicker extends Nette\Forms\FormControl
 	public function getControl()
 	{
 		$control = parent::getControl();
-		if ($this->minDate) $control->min = $this->minDate->format(self::W3C_DATE_FORMAT);
-		if ($this->maxDate) $control->max = $this->maxDate->format(self::W3C_DATE_FORMAT);
+
+		list($min, $max) = $this->extractRangeRule($this->getRules());
+		if ($min !== NULL) $control->min = $min->format(self::W3C_DATE_FORMAT);
+		if ($max !== NULL) $control->max = $max->format(self::W3C_DATE_FORMAT);
 		if ($this->value) $control->value = $this->value->format(self::W3C_DATE_FORMAT);
 		$control->data['datepicker-dateformat'] = $this->dateFormat;
 		$control->class[] = $this->className;
@@ -297,9 +229,56 @@ class DatePicker extends Nette\Forms\FormControl
 	{
 		if (!$control instanceof self) throw new \InvalidStateException('Unable to validate ' . get_class($control) . ' instance.');
 		$value = $control->value;
-		return (empty($control->rawValue) || ($value instanceof DateTime
-			&& (!$control->minDate || $value >= $control->minDate)
-			&& (!$control->maxDate || $value <= $control->maxDate)));
+		return (empty($control->rawValue) || $value instanceof DateTime);
+	}
+
+
+
+	/**
+	 * Is entered values within allowed range?
+	 *
+	 * @author   Jan Tvrdík
+	 * @param    DatePicker
+	 * @param    array             0 => minDate, 1 => maxDate (at least one must be specified)
+	 * @return   bool
+	 */
+	public static function validateRange(self $control, array $range)
+	{
+		return ($range[0] === NULL || $control->getValue() >= $range[0]) && ($range[1] === NULL || $control->getValue() <= $range[1]);
+	}
+
+
+
+	/**
+	 * Finds minimum and maximum allowed dates.
+	 *
+	 * @author   Jan Tvrdík
+	 * @param    Nette\Forms\Rules
+	 * @return   array             0 => DateTime|NULL $minDate, 1 => DateTime|NULL $maxDate
+	 */
+	private function extractRangeRule(Nette\Forms\Rules $rules)
+	{
+		$controlMin = $controlMax = NULL;
+		foreach ($rules as $rule) {
+			if ($rule->type === Nette\Forms\Rule::VALIDATOR) {
+				if ($rule->operation === Nette\Forms\Form::RANGE && !$rule->isNegative) {
+					$ruleMinMax = $rule->arg;
+				}
+
+			} elseif ($rule->type === Nette\Forms\Rule::CONDITION) {
+				if ($rule->operation === Nette\Forms\Form::FILLED && !$rule->isNegative && $rule->control === $this) {
+					$ruleMinMax = $this->extractRangeRule($rule->subRules);
+				}
+			}
+
+			if (isset($ruleMinMax)) {
+				list($ruleMin, $ruleMax) = $ruleMinMax;
+				if ($ruleMin !== NULL && ($controlMin === NULL || $ruleMin > $controlMin)) $controlMin = $ruleMin;
+				if ($ruleMax !== NULL && ($controlMax === NULL || $ruleMax < $controlMax)) $controlMax = $ruleMax;
+				$ruleMinMax = NULL;
+			}
+		}
+		return array($controlMin, $controlMax);
 	}
 
 }

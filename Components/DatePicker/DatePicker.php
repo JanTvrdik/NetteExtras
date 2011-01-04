@@ -246,7 +246,7 @@ class DatePicker extends Nette\Forms\FormControl
 		}
 
 		if (!isset($rawValue) && isset($value)) {
-			$rawValue = $value->format($this->dateFormat);
+			$rawValue = $value->format(self::W3C_DATE_FORMAT);
 		}
 
 		$this->value = $value;

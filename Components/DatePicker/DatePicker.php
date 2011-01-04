@@ -9,6 +9,7 @@
 namespace JanTvrdik\Components;
 
 use Nette;
+use Nette\Forms;
 use DateTime;
 
 /**
@@ -18,7 +19,7 @@ use DateTime;
  *
  * @author   Jan Tvrdík
  */
-class DatePicker extends Nette\Forms\FormControl
+class DatePicker extends Forms\FormControl
 {
 	/** @link    http://dev.w3.org/html5/spec/common-microsyntaxes.html#valid-date-string */
 	const W3C_DATE_FORMAT = 'Y-m-d';
@@ -26,7 +27,7 @@ class DatePicker extends Nette\Forms\FormControl
 	/** @var     DateTime|NULL     internal date reprezentation */
 	protected $value;
 
-	/** @var     string            unfiltered, by user entered value */
+	/** @var     string            value entered by user (unfiltered) */
 	protected $rawValue;
 
 	/** @var     string            class name */
@@ -123,7 +124,9 @@ class DatePicker extends Nette\Forms\FormControl
 		list($min, $max) = $this->extractRangeRule($this->getRules());
 		if ($min !== NULL) $control->min = $min->format(self::W3C_DATE_FORMAT);
 		if ($max !== NULL) $control->max = $max->format(self::W3C_DATE_FORMAT);
+
 		if ($this->value) $control->value = $this->value->format(self::W3C_DATE_FORMAT);
+
 		$control->data['datepicker-dateformat'] = $this->dateFormat;
 		$control->class[] = $this->className;
 
@@ -209,7 +212,7 @@ class DatePicker extends Nette\Forms\FormControl
 	 * @param    DatePicker
 	 * @return   bool
 	 */
-	public static function validateFilled(Nette\Forms\IFormControl $control)
+	public static function validateFilled(Forms\IFormControl $control)
 	{
 		if (!$control instanceof self) throw new \InvalidStateException('Unable to validate ' . get_class($control) . ' instance.');
 		$rawValue = $control->rawValue;
@@ -225,7 +228,7 @@ class DatePicker extends Nette\Forms\FormControl
 	 * @param    DatePicker
 	 * @return   bool
 	 */
-	public static function validateValid(Nette\Forms\IFormControl $control)
+	public static function validateValid(Forms\IFormControl $control)
 	{
 		if (!$control instanceof self) throw new \InvalidStateException('Unable to validate ' . get_class($control) . ' instance.');
 		$value = $control->value;
@@ -239,7 +242,7 @@ class DatePicker extends Nette\Forms\FormControl
 	 *
 	 * @author   Jan Tvrdík
 	 * @param    DatePicker
-	 * @param    array             0 => minDate, 1 => maxDate (at least one must be specified)
+	 * @param    array             0 => minDate, 1 => maxDate
 	 * @return   bool
 	 */
 	public static function validateRange(self $control, array $range)
@@ -253,20 +256,20 @@ class DatePicker extends Nette\Forms\FormControl
 	 * Finds minimum and maximum allowed dates.
 	 *
 	 * @author   Jan Tvrdík
-	 * @param    Nette\Forms\Rules
+	 * @param    Forms\Rules
 	 * @return   array             0 => DateTime|NULL $minDate, 1 => DateTime|NULL $maxDate
 	 */
-	private function extractRangeRule(Nette\Forms\Rules $rules)
+	private function extractRangeRule(Forms\Rules $rules)
 	{
 		$controlMin = $controlMax = NULL;
 		foreach ($rules as $rule) {
-			if ($rule->type === Nette\Forms\Rule::VALIDATOR) {
-				if ($rule->operation === Nette\Forms\Form::RANGE && !$rule->isNegative) {
+			if ($rule->type === Forms\Rule::VALIDATOR) {
+				if ($rule->operation === Forms\Form::RANGE && !$rule->isNegative) {
 					$ruleMinMax = $rule->arg;
 				}
 
-			} elseif ($rule->type === Nette\Forms\Rule::CONDITION) {
-				if ($rule->operation === Nette\Forms\Form::FILLED && !$rule->isNegative && $rule->control === $this) {
+			} elseif ($rule->type === Forms\Rule::CONDITION) {
+				if ($rule->operation === Forms\Form::FILLED && !$rule->isNegative && $rule->control === $this) {
 					$ruleMinMax = $this->extractRangeRule($rule->subRules);
 				}
 			}

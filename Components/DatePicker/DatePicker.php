@@ -33,12 +33,6 @@ class DatePicker extends Forms\FormControl
 	/** @var     string            class name */
 	private $className = 'date';
 
-	/**
-	 * @var      string            date format for jQuery UI DatePicker
-	 * @link     http://docs.jquery.com/UI/Datepicker/formatDate
-	 */
-	private $dateFormat = 'd. m. yy';
-
 
 
 	/**
@@ -84,34 +78,6 @@ class DatePicker extends Forms\FormControl
 
 
 	/**
-	 * Returns date format for jQuery UI DatePicker.
-	 *
-	 * @author   Jan Tvrdík
-	 * @return   string
-	 */
-	public function getDateFormat()
-	{
-		return $this->dateFormat;
-	}
-
-
-
-	/**
-	 * Sets date format for jQuery UI DatePicker.
-	 *
-	 * @author   Jan Tvrdík
-	 * @param    string
-	 * @return   self
-	 */
-	public function setDateFormat($dateFormat)
-	{
-		$this->dateFormat = $dateFormat;
-		return $this;
-	}
-
-
-
-	/**
 	 * Generates control's HTML element.
 	 *
 	 * @author   Jan Tvrdík
@@ -120,16 +86,11 @@ class DatePicker extends Forms\FormControl
 	public function getControl()
 	{
 		$control = parent::getControl();
-
+		$control->class[] = $this->className;
 		list($min, $max) = $this->extractRangeRule($this->getRules());
 		if ($min !== NULL) $control->min = $min->format(self::W3C_DATE_FORMAT);
 		if ($max !== NULL) $control->max = $max->format(self::W3C_DATE_FORMAT);
-
 		if ($this->value) $control->value = $this->value->format(self::W3C_DATE_FORMAT);
-
-		$control->data['datepicker-dateformat'] = $this->dateFormat;
-		$control->class[] = $this->className;
-
 		return $control;
 	}
 

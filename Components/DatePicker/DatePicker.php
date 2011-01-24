@@ -86,7 +86,7 @@ class DatePicker extends Forms\FormControl
 	public function getControl()
 	{
 		$control = parent::getControl();
-		$control->class[] = $this->className;
+		$control->addClass($this->className);
 		list($min, $max) = $this->extractRangeRule($this->getRules());
 		if ($min !== NULL) $control->min = $min->format(self::W3C_DATE_FORMAT);
 		if ($max !== NULL) $control->max = $max->format(self::W3C_DATE_FORMAT);

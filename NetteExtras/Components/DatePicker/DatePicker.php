@@ -15,9 +15,12 @@ use DateTime;
 /**
  * Form control for selecting date.
  *
- * Compatible with jQuery UI DatePicker and HTML 5
+ *  – compatible with jQuery UI DatePicker and HTML 5
+ *  – works with DateTime
  *
  * @author   Jan Tvrdík
+ * @version  2.1
+ * @link     http://nette.merxes.cz/date-picker/
  */
 class DatePicker extends Forms\FormControl
 {

@@ -52,6 +52,8 @@ use Nette\Templates\LatteException;
  * </code>
  *
  * @author   Jan Marek, Jan Tvrdík, Daniel Robenek
+ * @version  2.1
+ * @link     http://nette.merxes.cz/form-macros/
  */
 class FormMacros
 {

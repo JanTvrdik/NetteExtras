@@ -51,18 +51,18 @@ use Nette\Templates\LatteException;
  * {/form}
  * </code>
  *
- * @author   Jan Marek, Jan Tvrdík
+ * @author   Jan Marek, Jan Tvrdík, Daniel Robenek
  */
 class FormMacros
 {
 	/** @var LatteMacros */
-	private static $latte;
+	protected static $latte;
 
-	/** @var Nette\Forms\FormContainer */
+	/** @var Nette\Forms\Form */
 	private static $form;
 
-	/** @var int */
-	private static $containerLevel = 0;
+	/** @var array                 # => Nette\Forms\FormContainer */
+	private static $containerStack;
 
 
 
@@ -132,6 +132,7 @@ class FormMacros
 	public static function beginForm($form, Nette\Application\PresenterComponent $control, array $modifiers = NULL)
 	{
 		self::$form = ($form instanceof Nette\Forms\Form ? $form : $control->getComponent($form));
+		self::$containerStack = array(self::$form);
 		if ($modifiers) self::addAttributes(self::$form->getElementPrototype(), $modifiers, array('class', 'style'));
 		self::$form->render('begin');
 		return self::$form;
@@ -147,7 +148,7 @@ class FormMacros
 	 */
 	public static function endForm()
 	{
-		if (self::$containerLevel > 0) {
+		if (count(self::$containerStack) > 1) {
 			throw new LatteException('There are some unclosed containers.');
 		}
 		self::$form->render('end');
@@ -178,12 +179,11 @@ class FormMacros
 	 */
 	public static function beginContainer($name)
 	{
-		$container = self::$form[$name];
+		$container = end(self::$containerStack)->getComponent($name);
 		if (!$container instanceof Nette\Forms\FormContainer) {
 			throw new LatteException('Form container must be instance of Nette\Forms\FormContainer.');
 		}
-		self::$form = $container;
-		self::$containerLevel++;
+		self::$containerStack[] = $container;
 	}
 
 
@@ -196,12 +196,10 @@ class FormMacros
 	 */
 	public static function endContainer()
 	{
-		if (self::$containerLevel < 1) {
+		if (count(self::$containerStack) < 2) {
 			throw new LatteException('Trying to close container which is not open.');
 		}
-
-		self::$form = self::$form->getParent();
-		self::$containerLevel--;
+		array_pop(self::$containerStack);
 	}
 
 
@@ -229,7 +227,7 @@ class FormMacros
 	 */
 	public static function input($name, array $modifiers = NULL)
 	{
-		$input = self::$form[$name]->getControl();
+		$input = self::getControl($name)->getControl();
 		if ($modifiers) {
 			self::addAttributes($input, $modifiers, array('value', 'size', 'rows', 'cols', 'placeholder', 'class', 'style'));
 			if (isset($modifiers['caption'])) $input->value = $modifiers['caption'];
@@ -262,7 +260,7 @@ class FormMacros
 	 */
 	public static function label($name, array $modifiers = NULL)
 	{
-		$label = self::$form[$name]->getLabel();
+		$label = self::getControl($name)->getLabel();
 		if ($modifiers) {
 			self::addAttributes($label, $modifiers, array('class', 'style'));
 			if (isset($modifiers['text'])) $label->setText($modifiers['text']);
@@ -273,12 +271,25 @@ class FormMacros
 
 
 	/**
+	 * Returns form control.
+	 *
+	 * @param    string            input name
+	 * @return   Nette\Forms\IFormControl
+	 */
+	protected static function getControl($name)
+	{
+		return end(self::$containerStack)->getComponent($name);
+	}
+
+
+
+	/**
 	 * Parses given string a returns formatted name and modifiers as array.
 	 *
 	 * @param    string
 	 * @return   array             0 => name, 1 => modifiers
 	 */
-	private static function fetchNameAndModifiers($code)
+	protected static function fetchNameAndModifiers($code)
 	{
 		$name = self::$latte->formatString(self::$latte->fetchToken($code));
 		$modifiers = self::$latte->formatArray($code) ?: 'array()';
@@ -295,7 +306,7 @@ class FormMacros
 	 * @param    array             list of allowed attributes (# => name)
 	 * @return   void
 	 */
-	private static function addAttributes(Nette\Web\Html $el, array $attributes, array $allowedAttributes)
+	protected static function addAttributes(Nette\Web\Html $el, array $attributes, array $allowedAttributes)
 	{
 		foreach ($attributes as $attribute => $value) {
 			if (!in_array($attribute, $allowedAttributes)) continue;

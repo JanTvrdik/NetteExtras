@@ -58,9 +58,6 @@ class FormMacros
 	/** @var LatteMacros */
 	protected static $latte;
 
-	/** @var Nette\Forms\Form */
-	private static $form;
-
 	/** @var array                 # => Nette\Forms\FormContainer */
 	private static $containerStack;
 
@@ -102,7 +99,7 @@ class FormMacros
 	 */
 	public static function getForm()
 	{
-		return self::$form;
+		return self::$containerStack[0];
 	}
 
 
@@ -131,11 +128,13 @@ class FormMacros
 	 */
 	public static function beginForm($form, Nette\Application\PresenterComponent $control, array $modifiers = NULL)
 	{
-		self::$form = ($form instanceof Nette\Forms\Form ? $form : $control->getComponent($form));
-		self::$containerStack = array(self::$form);
-		if ($modifiers) self::addAttributes(self::$form->getElementPrototype(), $modifiers, array('class', 'style'));
-		self::$form->render('begin');
-		return self::$form;
+		$form = ($form instanceof Nette\Forms\Form ? $form : $control->getComponent($form));
+		self::$containerStack = array($form);
+
+		if ($modifiers) self::addAttributes($form->getElementPrototype(), $modifiers, array('class', 'style'));
+		$form->render('begin');
+
+		return $form;
 	}
 
 
@@ -151,7 +150,8 @@ class FormMacros
 		if (count(self::$containerStack) > 1) {
 			throw new LatteException('There are some unclosed containers.');
 		}
-		self::$form->render('end');
+		self::getForm()->render('end');
+		self::$containerStack = array();
 	}
 
 

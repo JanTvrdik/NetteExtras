@@ -9,7 +9,6 @@
 namespace JanTvrdik\Templates;
 
 use Nette;
-use Nette\Templates\LatteFilter;
 use Nette\Templates\LatteMacros;
 use Nette\Templates\LatteException;
 
@@ -164,7 +163,7 @@ class FormMacros
 	 */
 	public static function macroBeginContainer($content)
 	{
-		$name = LatteFilter::formatString(LatteFilter::fetchToken($content));
+		$name = self::$latte->formatString(self::$latte->fetchToken($content));
 		return __CLASS__ . '::beginContainer(' . $name . ')';
 	}
 

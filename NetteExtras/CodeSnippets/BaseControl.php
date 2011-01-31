@@ -14,6 +14,8 @@ use Nette;
  * Base control for all controls in application.
  *
  * @author   Jan Tvrdík
+ * @version  0.1
+ * @link     http://nette.merxes.cz/base-control/
  */
 abstract class BaseControl extends Nette\Application\Control
 {

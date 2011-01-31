@@ -2,12 +2,38 @@
 	<h1 n:inner-block="title">DatePicker example</h1>
 
 	<script type="text/javascript">
+		/* Czech initialisation for the jQuery UI date picker plugin. */
+		/* Written by Tomas Muller (tomas@tomas-muller.net). */
+		jQuery(function($) {
+			$.datepicker.regional['cs'] = {
+				closeText: 'Zavřít',
+				prevText: '&#x3c;Dříve',
+				nextText: 'Později&#x3e;',
+				currentText: 'Nyní',
+				monthNames: ['leden','únor','březen','duben','květen','červen',
+				'červenec','srpen','září','říjen','listopad','prosinec'],
+				monthNamesShort: ['led','úno','bře','dub','kvě','čer',
+				'čvc','srp','zář','říj','lis','pro'],
+				dayNames: ['neděle', 'pondělí', 'úterý', 'středa', 'čtvrtek', 'pátek', 'sobota'],
+				dayNamesShort: ['ne', 'po', 'út', 'st', 'čt', 'pá', 'so'],
+				dayNamesMin: ['ne','po','út','st','čt','pá','so'],
+				weekHeader: 'Týd',
+				dateFormat: 'dd. mm. yy',
+				firstDay: 1,
+				isRTL: false,
+				showMonthAfterYear: false,
+				yearSuffix: ''
+			};
+			$.datepicker.setDefaults($.datepicker.regional['cs']);
+		});
+	</script>
+
+	<script type="text/javascript">
 		$(document).ready(function () {
 			$("input.date").each(function () { // input[type=date] does not work in IE
 				var el = $(this);
 				var value = el.val();
 				var date = (value ? $.datepicker.parseDate($.datepicker.W3C, value) : null);
-				var dateFormat = el.data("datepicker-dateformat") || $.datepicker.W3C;
 
 				var minDate = el.attr("min") || null;
 				if (minDate) minDate = $.datepicker.parseDate($.datepicker.W3C, minDate);
@@ -15,12 +41,11 @@
 				if (maxDate) maxDate = $.datepicker.parseDate($.datepicker.W3C, maxDate);
 
 				el.get(0).type = "text"; // changing via jQuery is prohibited, because of IE
-				el.val($.datepicker.formatDate(dateFormat, date));
 				el.datepicker({
-					dateFormat: dateFormat,
 					minDate: minDate,
 					maxDate: maxDate
 				});
+				el.val($.datepicker.formatDate(el.datepicker("option", "dateFormat"), date));
 			});
 		});
 	</script>

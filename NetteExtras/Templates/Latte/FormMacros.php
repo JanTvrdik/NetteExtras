@@ -11,6 +11,7 @@ namespace JanTvrdik\Templates;
 use Nette;
 use Nette\Templates\LatteFilter;
 use Nette\Templates\LatteMacros;
+use Nette\Templates\LatteException;
 
 /**
  * Latte macros for comfortable form rendering.
@@ -52,7 +53,6 @@ use Nette\Templates\LatteMacros;
  * </code>
  *
  * @author   Jan Marek, Jan Tvrdík
- * @license  MIT
  */
 class FormMacros
 {
@@ -78,14 +78,14 @@ class FormMacros
 
 
 	/**
-	 * Registers form macros as default Latte macros.
+	 * Registers form macros.
 	 *
 	 * @return   void
 	 */
 	public static function register(LatteMacros $latte)
 	{
 		$latte->macros['form'] = '<?php %' . __CLASS__ . '::macroBegin% ?>';
-		$latte->macros['/form'] = '<?php ' . __CLASS__ . '::end() ?>';
+		$latte->macros['/form'] = '<?php ' . __CLASS__ . '::endForm() ?>';
 		$latte->macros['formContainer'] = '<?php %' . __CLASS__ . '::macroBeginContainer% ?>';
 		$latte->macros['/formContainer'] = '<?php ' . __CLASS__ . '::endContainer() ?>';
 		$latte->macros['input'] = '<?php %' . __CLASS__ . '::macroInput% ?>';
@@ -117,7 +117,7 @@ class FormMacros
 	public static function macroBegin($content)
 	{
 		list($name, $modifiers) = self::fetchNameAndModifiers($content);
-		return '$formErrors = ' . __CLASS__ . "::begin($name, \$control, $modifiers)->getErrors()";
+		return '$formErrors = ' . __CLASS__ . "::beginForm($name, \$control, $modifiers)->getErrors()";
 	}
 
 
@@ -127,13 +127,13 @@ class FormMacros
 	 *
 	 * @param    Nette\Forms\Form|string form instance or form name in given control
 	 * @param    Nette\Application\PresenterComponent
-	 * @param    array
+	 * @param    array             list of modifiers (name => value)
 	 * @return   Nette\Forms\Form
 	 */
-	public static function begin($form, Nette\Application\PresenterComponent $control, array $modifiers = array())
+	public static function beginForm($form, Nette\Application\PresenterComponent $control, array $modifiers = NULL)
 	{
 		self::$form = ($form instanceof Nette\Forms\Form ? $form : $control->getComponent($form));
-		self::addAttributes(self::$form->getElementPrototype(), $modifiers, array('class', 'style'));
+		if ($modifiers) self::addAttributes(self::$form->getElementPrototype(), $modifiers, array('class', 'style'));
 		self::$form->render('begin');
 		return self::$form;
 	}
@@ -144,12 +144,12 @@ class FormMacros
 	 * Helper for {/form} macro.
 	 *
 	 * @return   void
-	 * @throws   InvalidStateException if some containers remain unclosed
+	 * @throws   LatteException    if some containers remain unclosed
 	 */
-	public static function end()
+	public static function endForm()
 	{
 		if (self::$containerLevel > 0) {
-			throw new \InvalidStateException('There are some unclosed containers.');
+			throw new LatteException('There are some unclosed containers.');
 		}
 		self::$form->render('end');
 	}
@@ -175,13 +175,13 @@ class FormMacros
 	 *
 	 * @param    string            container name
 	 * @return   void
-	 * @throws   InvalidArgumentException if container is not Nette\Forms\FormContainer instance
+	 * @throws   LatteException    if container is not Nette\Forms\FormContainer instance
 	 */
 	public static function beginContainer($name)
 	{
 		$container = self::$form[$name];
 		if (!$container instanceof Nette\Forms\FormContainer) {
-			throw new \InvalidArgumentException('Form container must be instance of Nette\Forms\FormContainer.');
+			throw new LatteException('Form container must be instance of Nette\Forms\FormContainer.');
 		}
 		self::$form = $container;
 		self::$containerLevel++;
@@ -193,12 +193,12 @@ class FormMacros
 	 * Helper for {/formContainer} macro.
 	 *
 	 * @return   void
-	 * @throws   InvalidStateException if there is no container to close
+	 * @throws   LatteException    if there is no container to close
 	 */
 	public static function endContainer()
 	{
 		if (self::$containerLevel < 1) {
-			throw new \InvalidStateException('Trying to close container which is not open.');
+			throw new LatteException('Trying to close container which is not open.');
 		}
 
 		self::$form = self::$form->getParent();
@@ -225,14 +225,16 @@ class FormMacros
 	 * Helper for {input ...} macro.
 	 *
 	 * @param    string            input name
-	 * @param    array
+	 * @param    array             list of modifiers (name => value)
 	 * @return   void
 	 */
-	public static function input($name, array $modifiers = array())
+	public static function input($name, array $modifiers = NULL)
 	{
 		$input = self::$form[$name]->getControl();
-		self::addAttributes($input, $modifiers, array('value', 'size', 'rows', 'cols', 'placeholder', 'class', 'style'));
-		if (isset($modifiers['caption'])) $input->value = $modifiers['caption'];
+		if ($modifiers) {
+			self::addAttributes($input, $modifiers, array('value', 'size', 'rows', 'cols', 'placeholder', 'class', 'style'));
+			if (isset($modifiers['caption'])) $input->value = $modifiers['caption'];
+		}
 		echo $input;
 	}
 
@@ -256,14 +258,16 @@ class FormMacros
 	 * Helper for {label ...} macro.
 	 *
 	 * @param    string            input name
-	 * @param    array
+	 * @param    array             list of modifiers (name => value)
 	 * @return   void
 	 */
-	public static function label($name, array $modifiers = array())
+	public static function label($name, array $modifiers = NULL)
 	{
 		$label = self::$form[$name]->getLabel();
-		self::addAttributes($label, $modifiers, array('class', 'style'));
-		if (isset($modifiers['text'])) $label->setText($modifiers['text']);
+		if ($modifiers) {
+			self::addAttributes($label, $modifiers, array('class', 'style'));
+			if (isset($modifiers['text'])) $label->setText($modifiers['text']);
+		}
 		echo $label;
 	}
 
@@ -288,8 +292,8 @@ class FormMacros
 	 * Adds allowed attributes to given element.
 	 *
 	 * @param    Nette\Web\Html
-	 * @param    array
-	 * @param    array
+	 * @param    array             list of attributes (name => value)
+	 * @param    array             list of allowed attributes (# => name)
 	 * @return   void
 	 */
 	private static function addAttributes(Nette\Web\Html $el, array $attributes, array $allowedAttributes)

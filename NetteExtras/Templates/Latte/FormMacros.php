@@ -298,12 +298,12 @@ class FormMacros
 	 */
 	private static function addAttributes(Nette\Web\Html $el, array $attributes, array $allowedAttributes)
 	{
-		foreach ($allowedAttributes as $allowedAttribute) {
-			if (!isset($attributes[$allowedAttribute])) continue;
-			if (is_array($el->$allowedAttribute)) {
-				$el->{$allowedAttribute}[] = $attributes[$allowedAttribute]; // class support
+		foreach ($attributes as $attribute => $value) {
+			if (!in_array($attribute, $allowedAttributes)) continue;
+			if (is_array($el->$attribute)) {
+				$el->{$attribute}[] = $value;
 			} else {
-				$el->$allowedAttribute = $attributes[$allowedAttribute];
+				$el->$attribute = $value;
 			}
 		}
 	}

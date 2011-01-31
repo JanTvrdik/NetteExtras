@@ -86,6 +86,7 @@ class FormMacros
 		$latte->macros['/formContainer'] = '<?php ' . __CLASS__ . '::endContainer() ?>';
 		$latte->macros['input'] = '<?php %' . __CLASS__ . '::macroInput% ?>';
 		$latte->macros['label'] = '<?php %' . __CLASS__ . '::macroLabel% ?>';
+		$latte->macros['inputValue'] = '<?php %' . __CLASS__ . '::macroInputValue% ?>';
 
 		self::$latte = $latte;
 	}
@@ -266,6 +267,33 @@ class FormMacros
 			if (isset($modifiers['text'])) $label->setText($modifiers['text']);
 		}
 		echo $label;
+	}
+
+
+
+	/**
+	 * {inputValue ...}
+	 *
+	 * @param    string
+	 * @return   string
+	 */
+	public static function macroInputValue($content)
+	{
+		$name = self::$latte->formatString(self::$latte->fetchToken($content));
+		return __CLASS__ . "::inputValue($name)";
+	}
+
+
+
+	/**
+	 * Helper for {inputValue ...} macro.
+	 *
+	 * @param    string            input name
+	 * @return   void
+	 */
+	public static function inputValue($name)
+	{
+		echo self::getControl($name)->getValue();
 	}
 
 

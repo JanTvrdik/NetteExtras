@@ -9,8 +9,8 @@
 namespace JanTvrdik\Templates;
 
 use Nette;
-use Nette\Templates\LatteMacros;
-use Nette\Templates\LatteException;
+use Nette\Latte\DefaultMacros;
+use Nette\Latte\ParseException;
 
 /**
  * Latte macros for comfortable form rendering.
@@ -52,12 +52,12 @@ use Nette\Templates\LatteException;
  * </code>
  *
  * @author   Jan Marek, Jan Tvrdík, Daniel Robenek
- * @version  2.1
+ * @version  2.2
  * @link     http://nette.merxes.cz/form-macros/
  */
 class FormMacros
 {
-	/** @var LatteMacros */
+	/** @var DefaultMacros */
 	protected static $latte;
 
 	/** @var array                 # => Nette\Forms\FormContainer */
@@ -80,7 +80,7 @@ class FormMacros
 	 *
 	 * @return   void
 	 */
-	public static function register(LatteMacros $latte)
+	public static function register(DefaultMacros $latte)
 	{
 		$latte->macros['form'] = '<?php %' . __CLASS__ . '::macroBegin% ?>';
 		$latte->macros['/form'] = '<?php ' . __CLASS__ . '::endForm() ?>';
@@ -125,11 +125,11 @@ class FormMacros
 	 * Helper for {form ...} macro.
 	 *
 	 * @param    Nette\Forms\Form|string form instance or form name in given control
-	 * @param    Nette\Application\PresenterComponent
+	 * @param    Nette\Application\UI\PresenterComponent
 	 * @param    array             list of modifiers (name => value)
 	 * @return   Nette\Forms\Form
 	 */
-	public static function beginForm($form, Nette\Application\PresenterComponent $control, array $modifiers = NULL)
+	public static function beginForm($form, Nette\Application\UI\PresenterComponent $control, array $modifiers = NULL)
 	{
 		$form = ($form instanceof Nette\Forms\Form ? $form : $control->getComponent($form));
 		self::$containerStack = array($form);
@@ -146,12 +146,12 @@ class FormMacros
 	 * Helper for {/form} macro.
 	 *
 	 * @return   void
-	 * @throws   LatteException    if some containers remain unclosed
+	 * @throws   ParseException    if some containers remain unclosed
 	 */
 	public static function endForm()
 	{
 		if (count(self::$containerStack) > 1) {
-			throw new LatteException('There are some unclosed containers.');
+			throw new ParseException('There are some unclosed containers.');
 		}
 		self::getForm()->render('end');
 		self::$containerStack = array();
@@ -178,13 +178,13 @@ class FormMacros
 	 *
 	 * @param    string            container name
 	 * @return   void
-	 * @throws   LatteException    if container is not Nette\Forms\FormContainer instance
+	 * @throws   ParseException    if container is not Nette\Forms\FormContainer instance
 	 */
 	public static function beginContainer($name)
 	{
 		$container = end(self::$containerStack)->getComponent($name);
-		if (!$container instanceof Nette\Forms\FormContainer) {
-			throw new LatteException('Form container must be instance of Nette\Forms\FormContainer.');
+		if (!$container instanceof Nette\Forms\Container) {
+			throw new ParseException('Form container must be instance of Nette\Forms\FormContainer.');
 		}
 		self::$containerStack[] = $container;
 	}
@@ -195,12 +195,12 @@ class FormMacros
 	 * Helper for {/formContainer} macro.
 	 *
 	 * @return   void
-	 * @throws   LatteException    if there is no container to close
+	 * @throws   ParseException    if there is no container to close
 	 */
 	public static function endContainer()
 	{
 		if (count(self::$containerStack) < 2) {
-			throw new LatteException('Trying to close container which is not open.');
+			throw new ParseException('Trying to close container which is not open.');
 		}
 		array_pop(self::$containerStack);
 	}
@@ -304,7 +304,7 @@ class FormMacros
 	 * Returns form control.
 	 *
 	 * @param    string            input name
-	 * @return   Nette\Forms\IFormControl
+	 * @return   Nette\Forms\IControl
 	 */
 	protected static function getControl($name)
 	{
@@ -331,12 +331,12 @@ class FormMacros
 	/**
 	 * Adds allowed attributes to given element.
 	 *
-	 * @param    Nette\Web\Html
+	 * @param    Nette\Utils\Html
 	 * @param    array             list of attributes (name => value)
 	 * @param    array             list of allowed attributes (# => name)
 	 * @return   void
 	 */
-	protected static function addAttributes(Nette\Web\Html $el, array $attributes, array $allowedAttributes)
+	protected static function addAttributes(Nette\Utils\Html $el, array $attributes, array $allowedAttributes)
 	{
 		foreach ($attributes as $attribute => $value) {
 			if (!in_array($attribute, $allowedAttributes)) continue;

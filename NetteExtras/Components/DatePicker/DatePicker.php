@@ -19,10 +19,10 @@ use DateTime;
  *  – works with DateTime
  *
  * @author   Jan Tvrdík
- * @version  2.1
+ * @version  2.2
  * @link     http://nette.merxes.cz/date-picker/
  */
-class DatePicker extends Forms\FormControl
+class DatePicker extends Forms\Controls\BaseControl
 {
 	/** @link    http://dev.w3.org/html5/spec/common-microsyntaxes.html#valid-date-string */
 	const W3C_DATE_FORMAT = 'Y-m-d';
@@ -84,7 +84,7 @@ class DatePicker extends Forms\FormControl
 	 * Generates control's HTML element.
 	 *
 	 * @author   Jan Tvrdík
-	 * @return   Nette\Web\Html
+	 * @return   Nette\Utils\Html
 	 */
 	public function getControl()
 	{
@@ -138,7 +138,7 @@ class DatePicker extends Forms\FormControl
 		if ($value !== NULL) {
 			// DateTime constructor throws Exception when invalid input given
 			try {
-				$value = Nette\Tools::createDateTime($value); // clone DateTime when given
+				$value = Nette\DateTime::from($value); // clone DateTime when given
 			} catch (\Exception $e) {
 				$value = NULL;
 			}
@@ -176,9 +176,9 @@ class DatePicker extends Forms\FormControl
 	 * @param    DatePicker
 	 * @return   bool
 	 */
-	public static function validateFilled(Forms\IFormControl $control)
+	public static function validateFilled(Forms\IControl $control)
 	{
-		if (!$control instanceof self) throw new \InvalidStateException('Unable to validate ' . get_class($control) . ' instance.');
+		if (!$control instanceof self) throw new Nette\InvalidStateException('Unable to validate ' . get_class($control) . ' instance.');
 		$rawValue = $control->rawValue;
 		return !empty($rawValue);
 	}
@@ -192,9 +192,9 @@ class DatePicker extends Forms\FormControl
 	 * @param    DatePicker
 	 * @return   bool
 	 */
-	public static function validateValid(Forms\IFormControl $control)
+	public static function validateValid(Forms\IControl $control)
 	{
-		if (!$control instanceof self) throw new \InvalidStateException('Unable to validate ' . get_class($control) . ' instance.');
+		if (!$control instanceof self) throw new Nette\InvalidStateException('Unable to validate ' . get_class($control) . ' instance.');
 		$value = $control->value;
 		return (empty($control->rawValue) || $value instanceof DateTime);
 	}

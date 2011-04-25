@@ -14,10 +14,10 @@ use Nette;
  * Base control for all controls in application.
  *
  * @author   Jan Tvrdík
- * @version  0.1
+ * @version  0.2
  * @link     http://nette.merxes.cz/base-control/
  */
-abstract class BaseControl extends Nette\Application\Control
+abstract class BaseControl extends Nette\Application\UI\Control
 {
 	/** @var     bool              automatically derive template path from class name */
 	protected $autoSetupTemplateFile = TRUE;
@@ -28,7 +28,7 @@ abstract class BaseControl extends Nette\Application\Control
 	 * Automatically registers template file.
 	 *
 	 * @author   Jan Tvrdík
-	 * @return   Nette\Templates\FileTemplate
+	 * @return   Nette\Templating\FileTemplate
 	 */
 	protected function createTemplate()
 	{

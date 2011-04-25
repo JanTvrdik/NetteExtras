@@ -40,7 +40,18 @@
 				var maxDate = el.attr("max") || null;
 				if (maxDate) maxDate = $.datepicker.parseDate($.datepicker.W3C, maxDate);
 
-				el.get(0).type = "text"; // changing via jQuery is prohibited, because of IE
+				// Replace built-in date input: NOTE: input.attr("type", "text") throws exception by the browser
+				if (el.attr("type") == 'date') {
+					var tmp = $("<input/>");
+
+					$.each("class,disabled,id,maxlength,name,readonly,required,size,style,tabindex,title,value".split(","), function(i, attr)  {
+						tmp.attr(attr, el.attr(attr));
+					});
+					el.replaceWith(tmp);
+					el = tmp;
+				}
+
+
 				el.datepicker({
 					minDate: minDate,
 					maxDate: maxDate

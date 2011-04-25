@@ -6,8 +6,8 @@
  * @license  MIT
  */
 
-use Nette\Debug;
-use Nette\Application\AppForm as Form;
+use Nette\Diagnostics\Debugger;
+use Nette\Application\UI\Form;
 
 /**
  * Presenter for showing demos.
@@ -45,7 +45,7 @@ final class DemoPresenter extends BasePresenter
 	 */
 	public function datePickerFormSubmitted(Form $form)
 	{
-		$this->template->data = Debug::dump($form->values, TRUE);
+		$this->template->data = Debugger::dump($form->values, TRUE);
 	}
 
 	/**

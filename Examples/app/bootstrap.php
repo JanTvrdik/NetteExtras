@@ -6,15 +6,15 @@
  * @license  MIT
  */
 
-use Nette\Debug;
-use Nette\Application\Route;
+use Nette\Diagnostics\Debugger;
+use Nette\Application\Routers\Route;
 use Nette\Environment as Env;
-use Nette\Forms\FormContainer;
+use Nette\Forms\Container;
 
 require LIBS_DIR . '/Nette/loader.php';
 
-Debug::$strictMode = TRUE;
-Debug::enable();
+Debugger::$strictMode = TRUE;
+Debugger::enable();
 
 Env::loadConfig();
 
@@ -23,7 +23,7 @@ $router = $application->getRouter();
 $router[] = new Route('index.php', 'Demo:default', Route::ONE_WAY);
 $router[] = new Route('<action>', 'Demo:default');
 
-FormContainer::extensionMethod('addDatePicker', function (FormContainer $container, $name, $label = NULL) {
+Container::extensionMethod('addDatePicker', function (Container $container, $name, $label = NULL) {
 	return $container[$name] = new JanTvrdik\Components\DatePicker($label);
 });
 

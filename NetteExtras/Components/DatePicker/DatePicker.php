@@ -119,7 +119,7 @@ class DatePicker extends Forms\Controls\BaseControl
 		} elseif (is_string($value)) {
 			$rawValue = $value;
 
-			if (preg_match('#^(?P<dd>\d{1,2})[. -] *(?P<mm>\d{1,2})([. -] *(?P<yyyy>\d{4})?)?$#', $value, $matches)) {
+			if (preg_match('#^(?P<dd>\d{1,2})[. -/] *(?P<mm>\d{1,2})([. -/] *(?P<yyyy>\d{4})?)?$#', $value, $matches)) {
 				$dd = $matches['dd'];
 				$mm = $matches['mm'];
 				$yyyy = isset($matches['yyyy']) ? $matches['yyyy'] : date('Y');

@@ -19,7 +19,7 @@ use DateTime;
  *  – works with DateTime
  *
  * @author   Jan Tvrdík
- * @version  2.2
+ * @version  2.3
  * @link     http://nette.merxes.cz/date-picker/
  */
 class DatePicker extends Forms\Controls\BaseControl
@@ -204,14 +204,14 @@ class DatePicker extends Forms\Controls\BaseControl
 	/**
 	 * Is entered values within allowed range?
 	 *
-	 * @author   Jan Tvrdík
+	 * @author   Jan Tvrdík, David Grudl
 	 * @param    DatePicker
 	 * @param    array             0 => minDate, 1 => maxDate
 	 * @return   bool
 	 */
-	public static function validateRange(self $control, array $range)
+	public static function validateRange(Forms\IControl $control, $range)
 	{
-		return ($range[0] === NULL || $control->getValue() >= $range[0]) && ($range[1] === NULL || $control->getValue() <= $range[1]);
+		return Nette\Utils\Validators::isInRange($control->getValue(), $range);
 	}
 
 

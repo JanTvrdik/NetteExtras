@@ -63,18 +63,18 @@
 
 	{form datePickerForm}
 
-		<p class="error" n:foreach="$formErrors as $error">{$error}</p>
+		<p class="error" n:foreach="$form->errors as $error">{$error}</p>
 		<table>
 			<tr>
-				<th>{label datePicker1, text => "Basic"}</th>
+				<th>{label datePicker1}Basic{/}</th>
 				<td>{input datePicker1}</td>
 			</tr>
 			<tr>
-				<th>{label datePicker2, text => "Validation (filled + valid)"}</th>
+				<th>{label datePicker2}Validation (filled + valid){/}</th>
 				<td>{input datePicker2}</td>
 			</tr>
 			<tr>
-				<th>{label datePicker3, text => "Limited range of selectable days"}</th>
+				<th>{label datePicker3}Limited range of selectable days{/}</th>
 				<td>{input datePicker3}</td>
 			</tr>
 			<tr>

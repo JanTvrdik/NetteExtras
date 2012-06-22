@@ -67,7 +67,7 @@ final class DemoPresenter extends UI\Presenter
 			->addCondition(Form::FILLED)
 				->addRule(Form::RANGE, 'Entered date is not within allowed range.', array(new DateTime('-14 days'), new DateTime('+14 days')));
 		$form->addSubmit('submit');
-		$form->onSubmit[] = callback($this, 'datePickerFormSubmitted');
+		$form->onSuccess[] = callback($this, 'datePickerFormSubmitted');
 		return $form;
 	}
 

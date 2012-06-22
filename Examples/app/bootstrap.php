@@ -6,25 +6,25 @@
  * @license  MIT
  */
 
-use Nette\Diagnostics\Debugger;
 use Nette\Application\Routers\Route;
-use Nette\Environment as Env;
-use Nette\Forms\Container;
+use Nette\Config\Configurator;
+use Nette\Forms;
 
-require LIBS_DIR . '/Nette/loader.php';
+require_once LIBS_DIR . '/Nette/loader.php';
 
-Debugger::$strictMode = TRUE;
-Debugger::enable();
+$configurator = new Configurator();
+$configurator->enableDebugger();
+$configurator->setTempDirectory(TEMP_DIR);
+$configurator->createRobotLoader()
+	->addDirectory([APP_DIR, LIBS_DIR, APP_DIR . '/../../NetteExtras/Components', APP_DIR . '/../../NetteExtras/Templates'])
+	->register();
 
-Env::loadConfig();
+$dic = $configurator->createContainer();
+$dic->router[] = new Route('index.php', 'Demo:default', Route::ONE_WAY);
+$dic->router[] = new Route('<action>', 'Demo:default');
 
-$application = Env::getApplication();
-$router = $application->getRouter();
-$router[] = new Route('index.php', 'Demo:default', Route::ONE_WAY);
-$router[] = new Route('<action>', 'Demo:default');
-
-Container::extensionMethod('addDatePicker', function (Container $container, $name, $label = NULL) {
+Forms\Container::extensionMethod('addDatePicker', function (Forms\Container $container, $name, $label = NULL) {
 	return $container[$name] = new JanTvrdik\Components\DatePicker($label);
 });
 
-$application->run();
+$dic->application->run();

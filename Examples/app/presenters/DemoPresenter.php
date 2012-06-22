@@ -7,6 +7,7 @@
  */
 
 use Nette\Diagnostics\Debugger;
+use Nette\Application\UI;
 use Nette\Application\UI\Form;
 
 /**
@@ -14,7 +15,7 @@ use Nette\Application\UI\Form;
  *
  * @author   Jan Tvrdík
  */
-final class DemoPresenter extends BasePresenter
+final class DemoPresenter extends UI\Presenter
 {
 	/**
 	 * List of all available demos.

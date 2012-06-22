@@ -65,7 +65,7 @@ final class DemoPresenter extends UI\Presenter
 		$form->addDatePicker('datePicker3')
 			->addRule(Form::VALID, 'Entered date is not valid!')
 			->addCondition(Form::FILLED)
-				->addRule(Form::RANGE, 'Entered date is not within allowed range.', array(new DateTime('-14 days'), new DateTime('+14 days')));
+				->addRule(Form::RANGE, 'Entered date is not within allowed range.', array(new DateTime('-14 days 00:00'), new DateTime('+14 days 00:00')));
 		$form->addSubmit('submit');
 		$form->onSuccess[] = callback($this, 'datePickerFormSubmitted');
 		return $form;

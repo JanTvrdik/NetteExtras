@@ -217,6 +217,18 @@ class DatePicker extends Forms\Controls\BaseControl
 
 
 	/**
+	 * @param  DatePicker
+	 * @param  array of DatePicker controls | NULL
+	 * @return bool
+	 */
+	public static function validateControlRange(self $control, array $range)
+	{
+		return ($range[0] === NULL || $control->getValue() >= $range[0]->getValue()) && ($range[1] === NULL || $control->getValue() <= $range[1]->getValue());
+	}
+
+
+
+	/**
 	 * Finds minimum and maximum allowed dates.
 	 *
 	 * @author   Jan Tvrdík

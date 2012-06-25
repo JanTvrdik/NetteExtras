@@ -211,6 +211,8 @@ class DatePicker extends Forms\Controls\BaseControl
 	 */
 	public static function validateRange(Forms\IControl $control, $range)
 	{
+		isset($range[0]) && ($range[0] instanceof self) && $range[0] = $range[0]->getValue();
+		isset($range[1]) && ($range[1] instanceof self) && $range[1] = $range[1]->getValue();
 		return Nette\Utils\Validators::isInRange($control->getValue(), $range);
 	}
 

@@ -36,6 +36,8 @@ class DatePicker extends Forms\Controls\BaseControl
 	/** @var     string            class name */
 	private $className = 'date';
 
+	const DATE_RANGE = ':dateRange';
+
 
 
 	/**
@@ -211,6 +213,20 @@ class DatePicker extends Forms\Controls\BaseControl
 	 */
 	public static function validateRange(Forms\IControl $control, $range)
 	{
+		return Nette\Utils\Validators::isInRange($control->getValue(), $range);
+	}
+
+
+
+	/**
+	 * @param  DatePicker
+	 * @param  array
+	 * @return bool
+	 */
+	public static function validateDateRange(Forms\IControl $control, $range)
+	{
+		isset($range[0]) && $range[0] = $range[0]->getValue();
+		isset($range[1]) && $range[1] = $range[1]->getValue();
 		return Nette\Utils\Validators::isInRange($control->getValue(), $range);
 	}
 

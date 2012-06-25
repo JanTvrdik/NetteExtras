@@ -1,9 +1,10 @@
 <?php
+
 /**
  * Addons and code snippets for Nette Framework. (unofficial)
  *
- * @author   Jan Tvrdík
- * @license  MIT
+ * @author  Jan Tvrdík
+ * @license MIT
  */
 
 namespace JanTvrdik\Components;
@@ -12,28 +13,29 @@ use Nette;
 use Nette\Forms;
 use DateTime;
 
+
 /**
  * Form control for selecting date.
  *
  *  – compatible with jQuery UI DatePicker and HTML 5
  *  – works with DateTime
  *
- * @author   Jan Tvrdík
- * @version  2.3
- * @link     http://nette.merxes.cz/date-picker/
+ * @author  Jan Tvrdík
+ * @version 2.3
+ * @link    http://nette.merxes.cz/date-picker/
  */
 class DatePicker extends Forms\Controls\BaseControl
 {
-	/** @link    http://dev.w3.org/html5/spec/common-microsyntaxes.html#valid-date-string */
+	/** @link http://dev.w3.org/html5/spec/common-microsyntaxes.html#valid-date-string */
 	const W3C_DATE_FORMAT = 'Y-m-d';
 
-	/** @var     DateTime|NULL     internal date reprezentation */
+	/** @var DateTime|NULL internal date reprezentation */
 	protected $value;
 
-	/** @var     string            value entered by user (unfiltered) */
+	/** @var string value entered by user (unfiltered) */
 	protected $rawValue;
 
-	/** @var     string            class name */
+	/** @var string class name */
 	private $className = 'date';
 
 
@@ -41,8 +43,8 @@ class DatePicker extends Forms\Controls\BaseControl
 	/**
 	 * Class constructor.
 	 *
-	 * @author   Jan Tvrdík
-	 * @param    string            label
+	 * @author Jan Tvrdík
+	 * @param  string label
 	 */
 	public function __construct($label = NULL)
 	{
@@ -55,8 +57,8 @@ class DatePicker extends Forms\Controls\BaseControl
 	/**
 	 * Returns class name.
 	 *
-	 * @author   Jan Tvrdík
-	 * @return   string
+	 * @author Jan Tvrdík
+	 * @return string
 	 */
 	public function getClassName()
 	{
@@ -68,9 +70,9 @@ class DatePicker extends Forms\Controls\BaseControl
 	/**
 	 * Sets class name for input element.
 	 *
-	 * @author   Jan Tvrdík
-	 * @param    string
-	 * @return   self
+	 * @author Jan Tvrdík
+	 * @param  string
+	 * @return self
 	 */
 	public function setClassName($className)
 	{
@@ -83,8 +85,8 @@ class DatePicker extends Forms\Controls\BaseControl
 	/**
 	 * Generates control's HTML element.
 	 *
-	 * @author   Jan Tvrdík
-	 * @return   Nette\Utils\Html
+	 * @author Jan Tvrdík
+	 * @return Nette\Utils\Html
 	 */
 	public function getControl()
 	{
@@ -102,9 +104,9 @@ class DatePicker extends Forms\Controls\BaseControl
 	/**
 	 * Sets DatePicker value.
 	 *
-	 * @author   Jan Tvrdík
-	 * @param    DateTime|int|string
-	 * @return   self
+	 * @author Jan Tvrdík
+	 * @param  DateTime|int|string
+	 * @return self
 	 */
 	public function setValue($value)
 	{
@@ -159,8 +161,8 @@ class DatePicker extends Forms\Controls\BaseControl
 	/**
 	 * Returns unfiltered value.
 	 *
-	 * @author   Jan Tvrdík
-	 * @return   string
+	 * @author Jan Tvrdík
+	 * @return string
 	 */
 	public function getRawValue()
 	{
@@ -172,9 +174,9 @@ class DatePicker extends Forms\Controls\BaseControl
 	/**
 	 * Does user enter anything? (the value doesn't have to be valid)
 	 *
-	 * @author   Jan Tvrdík
-	 * @param    DatePicker
-	 * @return   bool
+	 * @author Jan Tvrdík
+	 * @param  DatePicker
+	 * @return bool
 	 */
 	public static function validateFilled(Forms\IControl $control)
 	{
@@ -188,9 +190,9 @@ class DatePicker extends Forms\Controls\BaseControl
 	/**
 	 * Is entered value valid? (empty value is also valid!)
 	 *
-	 * @author   Jan Tvrdík
-	 * @param    DatePicker
-	 * @return   bool
+	 * @author Jan Tvrdík
+	 * @param  DatePicker
+	 * @return bool
 	 */
 	public static function validateValid(Forms\IControl $control)
 	{
@@ -204,10 +206,10 @@ class DatePicker extends Forms\Controls\BaseControl
 	/**
 	 * Is entered values within allowed range?
 	 *
-	 * @author   Jan Tvrdík, David Grudl
-	 * @param    DatePicker
-	 * @param    array             0 => minDate, 1 => maxDate
-	 * @return   bool
+	 * @author Jan Tvrdík, David Grudl
+	 * @param  DatePicker
+	 * @param  array 0 => minDate, 1 => maxDate
+	 * @return bool
 	 */
 	public static function validateRange(Forms\IControl $control, $range)
 	{
@@ -219,9 +221,9 @@ class DatePicker extends Forms\Controls\BaseControl
 	/**
 	 * Finds minimum and maximum allowed dates.
 	 *
-	 * @author   Jan Tvrdík
-	 * @param    Forms\Rules
-	 * @return   array             0 => DateTime|NULL $minDate, 1 => DateTime|NULL $maxDate
+	 * @author Jan Tvrdík
+	 * @param  Forms\Rules
+	 * @return array 0 => DateTime|NULL $minDate, 1 => DateTime|NULL $maxDate
 	 */
 	private function extractRangeRule(Forms\Rules $rules)
 	{
@@ -247,5 +249,4 @@ class DatePicker extends Forms\Controls\BaseControl
 		}
 		return array($controlMin, $controlMax);
 	}
-
 }
